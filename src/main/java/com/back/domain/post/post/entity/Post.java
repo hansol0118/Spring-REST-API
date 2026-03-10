@@ -61,5 +61,13 @@ public class Post extends BaseEntity {
         comments.remove(comment);
     }
 
-    // 댓글 수정
+    // dto 변환 메서드
+//    public PostDto toDto() {
+//        return new PostDto(
+//                this.getId(),
+//                this.getCreateDate(),
+//                this.getModifyDate(),
+//                this.getTitle(),
+//                this.getContent()
+//        );
 }
