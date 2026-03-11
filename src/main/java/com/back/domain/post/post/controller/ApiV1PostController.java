@@ -1,6 +1,5 @@
 package com.back.domain.post.post.controller;
 
-
 import com.back.domain.post.post.dto.PostDto;
 import com.back.domain.post.post.entity.Post;
 import com.back.domain.post.post.service.PostService;
@@ -23,8 +22,7 @@ public class ApiV1PostController {
         List<Post> result = postService.findAll();
 
         List<PostDto> postDtoList = result.stream()
-                .map(p -> (
-                        new PostDto(p.getId(), p.getTitle(), p.getContent(), p.getCreateDate(), p.getModifyDate())))
+                .map(Post::toDto)
                 .toList();
 
         return postDtoList;
