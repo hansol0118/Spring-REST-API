@@ -3,6 +3,7 @@ package com.back.domain.post.post.controller;
 import com.back.domain.post.post.dto.PostDto;
 import com.back.domain.post.post.entity.Post;
 import com.back.domain.post.post.service.PostService;
+import com.back.global.rsData.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +36,21 @@ public class ApiV1PostController {
     @ResponseBody
     public PostDto detail(@PathVariable int id) {
         Post post = postService.findById(id).get();
-
         return new PostDto(post);
+    }
+
+    @GetMapping("/{id}/delete")
+    @ResponseBody
+    public RsData<Void> delete(
+            @PathVariable int id
+    ) {
+
+        Post post = postService.findById(id).get();
+        postService.deleteById(id);
+
+        return new RsData<>(
+                "%d번 글이 삭제되었습니다.".formatted(id),
+                "204-1"
+        );
     }
 }
