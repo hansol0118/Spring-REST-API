@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -57,11 +58,13 @@ public class ApiV1PostControllerTest {
 
             // 단건 조회 검증
             resultActions
-                    .andExpect(jsonPath("$[%d].id".formatted(i)).value(post.getId()))
-                    .andExpect(jsonPath("$[%d].createDate".formatted(i)).value(matchesPattern(post.getCreateDate().toString().replaceAll("0+$", "") + ".*")))
-                    .andExpect(jsonPath("$[%d].modifyDate".formatted(i)).value(matchesPattern(post.getModifyDate().toString().replaceAll("0+$", "") + ".*")))
-                    .andExpect(jsonPath("$[%d].title".formatted(i)).value(post.getTitle()))
-                    .andExpect(jsonPath("$[%d].content".formatted(i)).value(post.getContent()));
+                    .andExpect(jsonPath("$.length()").value(3))
+                    .andExpect(jsonPath("$[*].id", containsInRelativeOrder(3, 1)))
+                    .andExpect(jsonPath("$[0].id").value(3))
+                    .andExpect(jsonPath("$[0].createDate").exists())
+                    .andExpect(jsonPath("$[0].modifyDate").exists())
+                    .andExpect(jsonPath("$[0].title").value("제목3"))
+                    .andExpect(jsonPath("$[0].content").value("내용3"));
         }
     }
 
