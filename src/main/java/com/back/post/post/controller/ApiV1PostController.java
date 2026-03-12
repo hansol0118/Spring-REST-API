@@ -1,14 +1,13 @@
-package com.back.domain.post.post.controller;
+package com.back.post.post.controller;
 
-import com.back.domain.post.post.dto.PostDto;
-import com.back.domain.post.post.entity.Post;
-import com.back.domain.post.post.service.PostService;
+import com.back.post.post.dto.PostDto;
+import com.back.post.post.entity.Post;
+import com.back.post.post.service.PostService;
 import com.back.global.rsData.RsData;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.jmx.ParentAwareNamingStrategy;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +19,6 @@ import java.util.List;
 public class ApiV1PostController {
 
     private final PostService postService;
-    private final ParentAwareNamingStrategy parentAwareNamingStrategy;
 
     @GetMapping
     public List<PostDto> list() {

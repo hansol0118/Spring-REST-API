@@ -1,10 +1,10 @@
-package com.back.domain.post.comment.controller;
+package com.back.post.comment.controller;
 
-import com.back.domain.post.comment.dto.CommentDto;
-import com.back.domain.post.comment.entity.Comment;
-import com.back.domain.post.post.entity.Post;
-import com.back.domain.post.post.repository.PostRepository;
-import com.back.domain.post.post.service.PostService;
+import com.back.post.comment.dto.CommentDto;
+import com.back.post.comment.entity.Comment;
+import com.back.post.post.entity.Post;
+import com.back.post.post.repository.PostRepository;
+import com.back.post.post.service.PostService;
 import com.back.global.rsData.RsData;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

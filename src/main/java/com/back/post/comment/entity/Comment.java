@@ -1,6 +1,6 @@
-package com.back.domain.post.comment.entity;
+package com.back.post.comment.entity;
 
-import com.back.domain.post.post.entity.Post;
+import com.back.post.post.entity.Post;
 import com.back.global.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
