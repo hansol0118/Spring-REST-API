@@ -14,8 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.matchesPattern;
@@ -46,30 +44,18 @@ public class ApiV1PostControllerTest {
                 )
                 .andDo(print());
 
-        List<Post> posts = postRepository.findAll();
-
         resultActions
-                .andExpect(handler().handlerType(ApiV1PostController.class))
-                .andExpect(handler().methodName("list"))
-                .andExpect(status().isOk());
-
-        for (int i = 0; i < posts.size(); i++) {
-            Post post = posts.get(i);
-
-            // 단건 조회 검증
-            resultActions
-                    .andExpect(jsonPath("$.length()").value(3))
-                    .andExpect(jsonPath("$[*].id", containsInRelativeOrder(3, 1)))
-                    .andExpect(jsonPath("$[0].id").value(3))
-                    .andExpect(jsonPath("$[0].createDate").exists())
-                    .andExpect(jsonPath("$[0].modifyDate").exists())
-                    .andExpect(jsonPath("$[0].title").value("제목3"))
-                    .andExpect(jsonPath("$[0].content").value("내용3"));
-        }
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$[*].id", containsInRelativeOrder(3, 1)))
+                .andExpect(jsonPath("$[0].id").value(3))
+                .andExpect(jsonPath("$[0].createDate").exists())
+                .andExpect(jsonPath("$[0].modifyDate").exists())
+                .andExpect(jsonPath("$[0].title").value("제목3"))
+                .andExpect(jsonPath("$[0].content").value("내용3"));
     }
 
     @Test
-    @DisplayName("글 단건 조회")
+    @DisplayName("글 단건 조회 - 성공")
     void t2() throws Exception {
         int targetId = 1;
 
@@ -101,8 +87,26 @@ public class ApiV1PostControllerTest {
     }
 
     @Test
-    @DisplayName("글 생성")
+    @DisplayName("글 단건 조회 - 실패(존재하지 않는 글)")
     void t3() throws Exception {
+        int targetId = Integer.MAX_VALUE;
+
+        ResultActions resultActions = mvc
+                .perform(
+                        get("/api/v1/posts/%d".formatted(targetId))
+                )
+                .andDo(print());
+
+        resultActions
+                .andExpect(handler().handlerType(ApiV1PostController.class))
+                .andExpect(handler().methodName("detail"))
+                .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    @DisplayName("글 작성")
+    void t4() throws Exception {
         String title = "제목입니다";
         String content = "내용입니다";
 
@@ -120,12 +124,21 @@ public class ApiV1PostControllerTest {
                 .andDo(print());
 
         resultActions
-                .andExpect(status().isCreated());
+                .andExpect(handler().handlerType(ApiV1PostController.class))
+                .andExpect(handler().methodName("write"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.resultCode").value("201-1"))
+                .andExpect(jsonPath("$.msg").value("4번 게시물이 생성되었습니다."))
+                .andExpect(jsonPath("$.data.postDto.id").value(4))
+                .andExpect(jsonPath("$.data.postDto.createDate").exists())
+                .andExpect(jsonPath("$.data.postDto.modifyDate").exists())
+                .andExpect(jsonPath("$.data.postDto.title").value(title))
+                .andExpect(jsonPath("$.data.postDto.content").value(content));
     }
 
     @Test
     @DisplayName("글 수정")
-    void t4() throws Exception {
+    void t5() throws Exception {
         int targetId = 1;
         String title = "제목 수정";
         String content = "내용 수정";
@@ -147,7 +160,9 @@ public class ApiV1PostControllerTest {
         resultActions
                 .andExpect(handler().handlerType(ApiV1PostController.class))
                 .andExpect(handler().methodName("modify"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
+                .andExpect(jsonPath("$.msg").value("%d번 게시물이 수정되었습니다.".formatted(targetId)));
 
         // 선택적 검증
         Post post = postRepository.findById(targetId).get();
@@ -156,4 +171,27 @@ public class ApiV1PostControllerTest {
         assertThat(post.getContent()).isEqualTo(content);
     }
 
+    @Test
+    @DisplayName("글 삭제")
+    void t6() throws Exception {
+        int targetId = 1;
+
+        ResultActions resultActions = mvc
+                .perform(
+                        delete("/api/v1/posts/%d".formatted(targetId))
+                )
+                .andDo(print());
+
+        // 필수 검증
+        resultActions
+                .andExpect(handler().handlerType(ApiV1PostController.class))
+                .andExpect(handler().methodName("delete"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
+                .andExpect(jsonPath("$.msg").value("%d번 게시물이 삭제되었습니다.".formatted(targetId)));
+
+        // 선택적 검증
+        Post post = postRepository.findById(targetId).orElse(null);
+        assertThat(post).isNull();
+    }
 }
