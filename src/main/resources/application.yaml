@@ -3,7 +3,7 @@ spring:
     active: dev
 
 springdoc:
-  default-produces-media-type: application/json
+  default-produces-media-type: application/json; charset=UTF-8
 
   output:
     ansi:

@@ -1,5 +1,6 @@
 package com.back.domain.home.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,6 +12,7 @@ import java.net.UnknownHostException;
 public class HomeController {
 
     @GetMapping(produces = MediaType.TEXT_HTML_VALUE)
+    @Tag(name="Home",description = "홈페이지")
     public String home() throws UnknownHostException {
 
         InetAddress localhost = InetAddress.getLocalHost();
